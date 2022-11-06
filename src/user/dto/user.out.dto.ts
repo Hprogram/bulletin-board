@@ -7,3 +7,9 @@ export class UserOut extends BaseOutDto {
   @Field((type) => User)
   user!: User;
 }
+
+@ObjectType()
+export class getBoardsOut extends BaseOutDto {
+  @Field((type) => User)
+  author!: User;
+}

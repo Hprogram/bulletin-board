@@ -3,8 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import e from 'express';
 import { ErrorCode } from 'src/shared/error.code';
 import { Repository } from 'typeorm';
-import { CreateUserIn, DeleteUserIn, SearchUserIn } from './dto/user.in.dto';
-import { UserOut } from './dto/user.out.dto';
+import {
+  CreateUserIn,
+  DeleteUserIn,
+  GetBoardsIn,
+  SearchUserIn,
+} from './dto/user.in.dto';
+import { getBoardsOut, UserOut } from './dto/user.out.dto';
 import { User } from './user.model';
 
 @Injectable()
@@ -54,7 +59,7 @@ export class UserService {
     }
   }
 
-  async deleteUser({ name }: DeleteUserIn): Promise<any> {
+  async deleteUser({ name }: DeleteUserIn): Promise<UserOut> {
     try {
       const responData = new UserOut();
       // 해당 유저가 있는지 검색 (id 기반)
@@ -82,7 +87,7 @@ export class UserService {
   }
 
   //유저 검색
-  async searchUser({ id }: SearchUserIn): Promise<any> {
+  async searchUser({ id }: SearchUserIn): Promise<UserOut> {
     try {
       const responData = new UserOut();
       // 해당 유저가 있는지 검색 (id 기반)
@@ -98,6 +103,32 @@ export class UserService {
       } else {
         responData.done = true;
         responData.user = user;
+      }
+
+      return responData;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  //유저 검색
+  async getBoards({ userName }: GetBoardsIn): Promise<getBoardsOut> {
+    try {
+      const responData = new getBoardsOut();
+      // 해당 유저가 있는지 검색 (id 기반)
+      const user = await this._usersRepository.findOne({
+        relations: ['boards'],
+        where: {
+          name: userName,
+        },
+      });
+
+      if (!user) {
+        errorSet(responData, 'U002');
+        throw new HttpException(responData, 404);
+      } else {
+        responData.done = true;
+        responData.author = user;
       }
 
       return responData;
