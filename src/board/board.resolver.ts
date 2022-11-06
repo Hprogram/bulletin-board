@@ -4,7 +4,6 @@ import { BoardService } from './board.service';
 import {
   CreateBoardIn,
   DeleteBoardIn,
-  GetBoardsIn,
   searchBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
