@@ -11,4 +11,5 @@ export const ErrorCode = {
   B004: 'content을 입력해주세요.',
   B005: 'user_id을 올바르게 입력해주세요.(Number)',
   B006: 'board_id을 올바르게 입력해주세요.(Number)',
+  B007: 'user가 작성한 글이 없습니다.',
 };
