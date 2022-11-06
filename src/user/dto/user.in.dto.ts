@@ -17,3 +17,9 @@ export class SearchUserIn {
   @Field((type) => Number)
   id!: number;
 }
+
+@InputType()
+export class GetBoardsIn {
+  @Field((type) => String)
+  userName!: string;
+}

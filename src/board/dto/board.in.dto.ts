@@ -37,12 +37,6 @@ export class DeleteBoardIn {
 }
 
 @InputType()
-export class GetBoardsIn {
-  @Field((type) => String)
-  userName!: string;
-}
-
-@InputType()
 export class searchBoardIn {
   @Field((type) => Number)
   boardId!: number;
