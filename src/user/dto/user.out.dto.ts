@@ -13,3 +13,12 @@ export class getBoardsOut extends BaseOutDto {
   @Field((type) => User)
   author!: User;
 }
+
+@ObjectType()
+export class GetUserTokenOut extends BaseOutDto {
+  @Field((type) => User)
+  user!: User;
+
+  @Field((type) => String)
+  accessToken!: string;
+}
