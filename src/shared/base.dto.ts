@@ -6,6 +6,10 @@ export class BaseOutDto {
   @Field((type) => Boolean)
   done: boolean;
 
+  // 정상 동작 메세지
+  @Field((type) => String, { nullable: true })
+  message?: string;
+
   // 에러 메세지
   @Field((type) => String, { nullable: true })
   error?: string;
