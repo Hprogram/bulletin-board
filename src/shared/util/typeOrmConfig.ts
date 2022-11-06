@@ -5,7 +5,7 @@ const env = process.env.NODE_ENV;
 
 let host = 'localhost';
 
-if (env !== 'dev') host = '172.16.25.2';
+if (env !== 'dev' && env !== 'test') host = '172.16.25.2';
 
 export const typeormConfig: PostgresConnectionOptions = {
   type: 'postgres',
