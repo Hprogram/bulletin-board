@@ -60,13 +60,16 @@ type BoardOut {
 
 type Query {
   hello(data: String): String!
-  getUserBoardByAll(param: GetUserBoardIn!): GetUserBoardOut!
-  getUserBoardById(param: GetUserBoardIn!): BoardOut!
+  getBoards(param: GetBoardsIn!): GetUserBoardOut!
+  searchBoard(param: searchBoardIn!): BoardOut!
 }
 
-input GetUserBoardIn {
-  board_id: Float
-  user_id: Float!
+input GetBoardsIn {
+  userName: String!
+}
+
+input searchBoardIn {
+  boardId: Float!
 }
 
 type Mutation {
@@ -88,17 +91,17 @@ input DeleteUserIn {
 input CreateBoardIn {
   title: String!
   content: String!
-  user_id: Float!
+  userName: String!
 }
 
 input UpdateBoardIn {
   title: String
   content: String
-  board_id: Float!
-  user_id: Float!
+  boardId: Float!
+  userName: String!
 }
 
 input DeleteBoardIn {
-  board_id: Float!
-  user_id: Float!
+  boardId: Float!
+  userName: String!
 }

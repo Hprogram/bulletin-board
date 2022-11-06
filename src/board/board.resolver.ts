@@ -4,7 +4,8 @@ import { BoardService } from './board.service';
 import {
   CreateBoardIn,
   DeleteBoardIn,
-  GetUserBoardIn,
+  GetBoardsIn,
+  searchBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
 import { GetUserBoardOut, BoardOut } from './dto/board.out.dto';
@@ -34,18 +35,14 @@ export class BoardResolver {
   }
 
   @Query((type) => GetUserBoardOut)
-  async getUserBoardByAll(
-    @Args('param') param: GetUserBoardIn,
-  ): Promise<GetUserBoardOut> {
-    this.logger.log('Get All User Board');
-    return await this.boardSvc.getUserBoardByAll(param);
+  async getBoards(@Args('param') param: GetBoardsIn): Promise<GetUserBoardOut> {
+    this.logger.log('get Boards');
+    return await this.boardSvc.getBoards(param);
   }
 
   @Query((type) => BoardOut)
-  async getUserBoardById(
-    @Args('param') param: GetUserBoardIn,
-  ): Promise<BoardOut> {
-    this.logger.log('Get All User Board By Id');
-    return await this.boardSvc.getUserBoardById(param);
+  async searchBoard(@Args('param') param: searchBoardIn): Promise<BoardOut> {
+    this.logger.log('search Board');
+    return await this.boardSvc.searchBoard(param);
   }
 }

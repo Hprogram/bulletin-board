@@ -8,8 +8,8 @@ export class CreateBoardIn {
   @Field((type) => String)
   content!: string;
 
-  @Field((type) => Number)
-  user_id!: number;
+  @Field((type) => String)
+  userName!: string;
 }
 
 @InputType()
@@ -21,26 +21,29 @@ export class UpdateBoardIn {
   content?: string;
 
   @Field((type) => Number)
-  board_id!: number;
+  boardId!: number;
 
-  @Field((type) => Number)
-  user_id!: number;
+  @Field((type) => String)
+  userName!: string;
 }
 
 @InputType()
 export class DeleteBoardIn {
   @Field((type) => Number)
-  board_id!: number;
+  boardId!: number;
 
-  @Field((type) => Number)
-  user_id!: number;
+  @Field((type) => String)
+  userName!: string;
 }
 
 @InputType()
-export class GetUserBoardIn {
-  @Field((type) => Number, { nullable: true })
-  board_id?: number;
+export class GetBoardsIn {
+  @Field((type) => String)
+  userName!: string;
+}
 
+@InputType()
+export class searchBoardIn {
   @Field((type) => Number)
-  user_id!: number;
+  boardId!: number;
 }

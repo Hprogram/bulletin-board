@@ -9,7 +9,8 @@ import { Board } from './board.model';
 import {
   CreateBoardIn,
   DeleteBoardIn,
-  GetUserBoardIn,
+  GetBoardsIn,
+  searchBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
 import { GetUserBoardOut, BoardOut } from './dto/board.out.dto';
@@ -31,7 +32,7 @@ export class BoardService {
   async createBoard({
     title,
     content,
-    user_id,
+    userName,
   }: CreateBoardIn): Promise<BoardOut> {
     try {
       const responData = new BoardOut();
@@ -45,7 +46,7 @@ export class BoardService {
         throw new HttpException(responData, 400);
       }
 
-      if (!user_id) {
+      if (!userName) {
         errorSet(responData, 'B005');
         throw new HttpException(responData, 400);
       }
@@ -55,7 +56,7 @@ export class BoardService {
       // user_id로 User 검색. 후에 JWT
       const user: User = await this._userRepository.findOne({
         where: {
-          id: user_id,
+          name: userName,
         },
       });
 
@@ -89,13 +90,13 @@ export class BoardService {
   async updateBoard({
     title,
     content,
-    user_id,
-    board_id,
+    userName,
+    boardId: board_id,
   }: UpdateBoardIn): Promise<BoardOut> {
     try {
       const responData = new BoardOut();
 
-      if (!user_id) {
+      if (!userName) {
         errorSet(responData, 'B005');
         throw new HttpException(responData, 400);
       }
@@ -108,7 +109,7 @@ export class BoardService {
       // user_id로 User 검색. 후에 JWT
       const user: User = await this._userRepository.findOne({
         where: {
-          id: user_id,
+          name: userName,
         },
       });
 
@@ -160,11 +161,14 @@ export class BoardService {
   }
 
   // Board에 작성한 글 삭제 (softDelete)
-  async deleteBoard({ user_id, board_id }: DeleteBoardIn): Promise<BoardOut> {
+  async deleteBoard({
+    userName,
+    boardId: board_id,
+  }: DeleteBoardIn): Promise<BoardOut> {
     try {
       const responData = new BoardOut();
 
-      if (!user_id) {
+      if (!userName) {
         errorSet(responData, 'B005');
         throw new HttpException(responData, 400);
       }
@@ -177,7 +181,7 @@ export class BoardService {
       // user_id로 User 검색. 후에 JWT
       const user: User = await this._userRepository.findOne({
         where: {
-          id: user_id,
+          name: userName,
         },
       });
 
@@ -225,13 +229,11 @@ export class BoardService {
   }
 
   // Board에 User가 작성한 글 모아보기
-  async getUserBoardByAll({
-    user_id,
-  }: GetUserBoardIn): Promise<GetUserBoardOut> {
+  async getBoards({ userName }: GetBoardsIn): Promise<GetUserBoardOut> {
     try {
       const responData = new GetUserBoardOut();
 
-      if (!user_id) {
+      if (!userName) {
         errorSet(responData, 'B005');
         throw new HttpException(responData, 400);
       }
@@ -239,7 +241,7 @@ export class BoardService {
       // user_id로 User 검색. 후에 JWT
       const user: User = await this._userRepository.findOne({
         where: {
-          id: user_id,
+          name: userName,
         },
       });
 
@@ -278,33 +280,12 @@ export class BoardService {
   }
 
   // Board에 User가 작성한 특정 글 가져오기 (ID)
-  async getUserBoardById({
-    user_id,
-    board_id,
-  }: GetUserBoardIn): Promise<BoardOut> {
+  async searchBoard({ boardId: board_id }: searchBoardIn): Promise<BoardOut> {
     try {
       const responData = new BoardOut();
 
-      if (!user_id) {
-        errorSet(responData, 'B005');
-        throw new HttpException(responData, 400);
-      }
-
       if (!board_id) {
         errorSet(responData, 'B006');
-        throw new HttpException(responData, 400);
-      }
-
-      // user_id로 User 검색. 후에 JWT
-      const user: User = await this._userRepository.findOne({
-        where: {
-          id: user_id,
-        },
-      });
-
-      if (!user) {
-        // 해당 id user 존재하지 않음.
-        errorSet(responData, 'U002');
         throw new HttpException(responData, 400);
       }
 
@@ -313,7 +294,6 @@ export class BoardService {
         relations: ['author'],
         where: {
           id: board_id,
-          author: user,
         },
       });
 
