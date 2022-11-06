@@ -26,15 +26,7 @@ type User {
   boards: [Board!]!
 }
 
-type CreateUserOut {
-  done: Boolean!
-  message: String
-  error: String
-  code: String
-  user: User!
-}
-
-type DeleteUserOut {
+type UserOut {
   done: Boolean!
   message: String
   error: String
@@ -60,8 +52,13 @@ type BoardOut {
 
 type Query {
   hello(data: String): String!
+  searchUser(param: SearchUserIn!): UserOut!
   getBoards(param: GetBoardsIn!): GetUserBoardOut!
   searchBoard(param: searchBoardIn!): BoardOut!
+}
+
+input SearchUserIn {
+  id: Float!
 }
 
 input GetBoardsIn {
@@ -73,8 +70,8 @@ input searchBoardIn {
 }
 
 type Mutation {
-  createUser(param: CreateUserIn!): CreateUserOut!
-  deleteUser(param: DeleteUserIn!): DeleteUserOut!
+  createUser(param: CreateUserIn!): UserOut!
+  deleteUser(param: DeleteUserIn!): UserOut!
   createBoard(param: CreateBoardIn!): BoardOut!
   updateBoard(param: UpdateBoardIn!): BoardOut!
   deleteBoard(param: DeleteBoardIn!): BoardOut!
@@ -85,7 +82,7 @@ input CreateUserIn {
 }
 
 input DeleteUserIn {
-  id: Float!
+  name: String!
 }
 
 input CreateBoardIn {

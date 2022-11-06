@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { CreateUserIn, DeleteUserIn } from './dto/user.in.dto';
-import { CreateUserOut, DeleteUserOut } from './dto/user.out.dto';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateUserIn, DeleteUserIn, SearchUserIn } from './dto/user.in.dto';
+import { UserOut } from './dto/user.out.dto';
 
 import { User } from './user.model';
 import { UserService } from './user.service';
@@ -13,15 +13,21 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
-  @Mutation((type) => CreateUserOut)
-  async createUser(@Args('param') param: CreateUserIn): Promise<CreateUserOut> {
+  @Mutation((type) => UserOut)
+  async createUser(@Args('param') param: CreateUserIn): Promise<UserOut> {
     this.logger.log('Create User');
     return await this.userSvc.createUser(param);
   }
 
-  @Mutation((type) => DeleteUserOut)
-  async deleteUser(@Args('param') param: DeleteUserIn): Promise<DeleteUserOut> {
+  @Mutation((type) => UserOut)
+  async deleteUser(@Args('param') param: DeleteUserIn): Promise<UserOut> {
     this.logger.log('Delete User');
     return await this.userSvc.deleteUser(param);
+  }
+
+  @Query((type) => UserOut)
+  async searchUser(@Args('param') param: SearchUserIn): Promise<UserOut> {
+    this.logger.log('Search User');
+    return await this.userSvc.searchUser(param);
   }
 }

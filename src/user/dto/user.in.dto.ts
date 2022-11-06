@@ -8,6 +8,12 @@ export class CreateUserIn {
 
 @InputType()
 export class DeleteUserIn {
+  @Field((type) => String)
+  name!: string;
+}
+
+@InputType()
+export class SearchUserIn {
   @Field((type) => Number)
   id!: number;
 }
