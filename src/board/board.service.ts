@@ -1,11 +1,21 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { title } from 'process';
+import { ErrorCode } from 'src/shared/error.code';
 import { User } from 'src/user/user.model';
 import { Repository } from 'typeorm';
 
 import { Board } from './board.model';
-import { CreateBoardIn } from './dto/board.in.dto';
-import { CreateBoardOut } from './dto/board.out.dto';
+import {
+  CreateBoardIn,
+  DeleteBoardIn,
+  UpdateBoardIn,
+} from './dto/board.in.dto';
+import {
+  CreateBoardOut,
+  DeleteBoardOut,
+  UpdateBoardOut,
+} from './dto/board.out.dto';
 
 @Injectable()
 export class BoardService {
@@ -30,27 +40,28 @@ export class BoardService {
       const responData = new CreateBoardOut();
       if (!title) {
         responData.done = false;
-        responData.code = 'B002';
-        responData.error = '타이틀을 입력해주세요.';
+        responData.code = 'B003';
+        responData.error = 'title을 입력해주세요.';
         throw new HttpException(responData, 400);
       }
 
       if (!content) {
         responData.done = false;
-        responData.code = 'B003';
+        responData.code = 'B004';
         responData.error = 'content을 입력해주세요.';
         throw new HttpException(responData, 400);
       }
 
       if (!user_id) {
         responData.done = false;
-        responData.code = 'B004';
+        responData.code = 'B005';
         responData.error = 'user_id을 입력해주세요.';
         throw new HttpException(responData, 400);
       }
 
       const board = new Board();
 
+      // user_id로 User 검색. 후에 JWT
       const user: User = await this._userRepository.findOne({
         where: {
           id: user_id,
@@ -77,6 +88,7 @@ export class BoardService {
         throw new HttpException(responData, 404);
       } else {
         responData.done = true;
+        responData.message = '정상적으로 작성 되었습니다.';
         responData.board = board;
 
         return responData;
@@ -85,4 +97,155 @@ export class BoardService {
       throw err;
     }
   }
+
+  // Board에 작성한 글 업데이트
+  async updateBoard({
+    title,
+    content,
+    user_id,
+    board_id,
+  }: UpdateBoardIn): Promise<UpdateBoardOut> {
+    try {
+      const responData = new UpdateBoardOut();
+
+      if (!user_id) {
+        errorSet(responData, 'B005');
+        throw new HttpException(responData, 400);
+      }
+
+      if (!board_id) {
+        errorSet(responData, 'B006');
+        throw new HttpException(responData, 400);
+      }
+
+      // user_id로 User 검색. 후에 JWT
+      const user: User = await this._userRepository.findOne({
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user) {
+        // 해당 id user 존재하지 않음.
+        errorSet(responData, 'U002');
+        throw new HttpException(responData, 400);
+      }
+
+      // user가 있다면 user가 작성한 board id가 맞는지 검색
+      const board: Board = await this._boardRepository.findOne({
+        relations: ['author'],
+        where: {
+          id: board_id,
+          author: user,
+        },
+      });
+
+      if (!board) {
+        // 해당 id board 존재하지 않음.
+        errorSet(responData, 'B002');
+        throw new HttpException(responData, 400);
+      }
+
+      // User,Board 모두 존재한다면
+      if (title) {
+        board.title = title;
+      }
+      if (content) {
+        board.content = content;
+      }
+
+      const saveBoard = await this._boardRepository.save(board);
+
+      if (!saveBoard) {
+        // 글 업데이트 실패
+        errorSet(responData, 'B001');
+        throw new HttpException(responData, 404);
+      } else {
+        responData.done = true;
+        responData.message = '정상적으로 업데이트 되었습니다.';
+        responData.board = board;
+
+        return responData;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // Board에 작성한 글 삭제 (softDelete)
+  async deleteBoard({
+    user_id,
+    board_id,
+  }: DeleteBoardIn): Promise<DeleteBoardOut> {
+    try {
+      const responData = new DeleteBoardOut();
+
+      if (!user_id) {
+        errorSet(responData, 'B005');
+        throw new HttpException(responData, 400);
+      }
+
+      if (!board_id) {
+        errorSet(responData, 'B006');
+        throw new HttpException(responData, 400);
+      }
+
+      // user_id로 User 검색. 후에 JWT
+      const user: User = await this._userRepository.findOne({
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user) {
+        // 해당 id user 존재하지 않음.
+        errorSet(responData, 'U002');
+        throw new HttpException(responData, 400);
+      }
+
+      // user가 있다면 user가 작성한 board id가 맞는지 검색
+      const board: Board = await this._boardRepository.findOne({
+        relations: ['author'],
+        where: {
+          id: board_id,
+          author: user,
+        },
+      });
+
+      if (!board) {
+        // 해당 id board 존재하지 않음.
+        errorSet(responData, 'B002');
+        throw new HttpException(responData, 400);
+      }
+
+      // User,Board 모두 존재한다면
+      const saveBoard = await this._boardRepository.softDelete({
+        id: board.id,
+      });
+
+      if (!saveBoard) {
+        // 글 업데이트 실패
+        errorSet(responData, 'B001');
+        throw new HttpException(responData, 404);
+      } else {
+        board.deletedAt = new Date();
+        responData.done = true;
+        responData.message = '정상적으로 삭제 되었습니다.';
+        responData.board = board;
+
+        return responData;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+}
+
+// 에러 반환 함수
+function errorSet(responData: any, code: string) {
+  responData.done = false;
+  responData.code = code;
+  responData.error = ErrorCode[code];
+
+  return responData;
 }

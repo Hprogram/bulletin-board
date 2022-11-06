@@ -8,3 +8,15 @@ export class CreateBoardOut extends BaseOutDto {
   @Field((type) => Board)
   board?: Board;
 }
+
+@ObjectType()
+export class UpdateBoardOut extends BaseOutDto {
+  @Field((type) => Board)
+  board?: Board;
+}
+
+@ObjectType()
+export class DeleteBoardOut extends BaseOutDto {
+  @Field((type) => Board)
+  board?: Board;
+}
