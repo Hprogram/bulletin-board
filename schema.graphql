@@ -34,11 +34,7 @@ type UserOut {
   user: User!
 }
 
-<<<<<<< HEAD
-type GetBoardsOut {
-=======
 type getBoardsOut {
->>>>>>> 72f3d7dafc7bde4c0e149976a11f91f7dee54bc8
   done: Boolean!
   message: String
   error: String
@@ -57,11 +53,7 @@ type BoardOut {
 type Query {
   hello(data: String): String!
   searchUser(param: SearchUserIn!): UserOut!
-<<<<<<< HEAD
-  getBoards(param: GetBoardsIn!): GetBoardsOut!
-=======
   getBoards(param: GetBoardsIn!): getBoardsOut!
->>>>>>> 72f3d7dafc7bde4c0e149976a11f91f7dee54bc8
   searchBoard(param: searchBoardIn!): BoardOut!
 }
 

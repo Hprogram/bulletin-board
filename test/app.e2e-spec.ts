@@ -162,29 +162,153 @@ describe('AppController (e2e)', () => {
         expect(body.data.createBoard.board.author.name).toBe(name);
       });
   });
+
   // 유저가 쓴 글 모두 가져오기
-  // it('boards of user', () => {
-  //   const name = 'seoltab';
+  it('boards of user', () => {
+    const name = 'seoltab';
+    const board = {
+      title: '설탭 소개',
+      content: '국내 넘버원 과외 설탭',
+    };
 
-  //   return request(app.getHttpServer())
-  //     .post('/graphql')
-  //     .send({
-  //       query: `query {
-  //         getBoards(param:{
-  //           userName:"${name}"
-  //         }){
-  //           board{
-  //             author {
-  //               name
-  //             }
-  //           }
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `query {
+          getBoards(param:{
+            userName:"${name}"
+          }){
+            done
+            author{
+              id
+              name
+              boards{
+                id
+                title
+                content
+              }
+            }
 
-  //         }
-  //       }`,
-  //     })
-  //     .expect(200)
-  //     .expect(({ body }) => {
-  //       expect(body.data.getBoards).toBe(expect.arrayContaining(['author']));
-  //     });
-  // });
+          }
+        }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        console.log(body.data.getBoards.author);
+        expect(body.data.getBoards.author.name).toBe(name);
+        // 이전 테스트에서 유저가 작성한 글이 해당 유저가 작성한 글 안에 포함되었는지 확인.
+        expect(body.data.getBoards.author.boards).toEqual(
+          expect.arrayContaining([expect.objectContaining(board)]),
+        );
+      });
+  });
+
+  // 유저 콘텐츠 업데이트 테스트
+  it('user update board', () => {
+    const board = {
+      title: '설탭 소개 업데이트 테스트',
+      content: '국내 넘버원 과외 설탭 업데이트 테스트',
+    };
+    const boardId = 1;
+    const name = 'seoltab';
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `mutation {
+          updateBoard(param:{
+            title: "${board.title}",
+            content:"${board.content}", 
+            userName:"${name}",
+            boardId: ${boardId}
+          }){
+            done
+            board{
+              id
+              title
+              content
+              author{
+                id
+                name
+              }
+            }
+          }
+        }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.updateBoard.board.title).toBe(board.title);
+        expect(body.data.updateBoard.board.content).toBe(board.content);
+        expect(body.data.updateBoard.board.author.name).toBe(name);
+      });
+  });
+
+  // 유저 콘텐츠 단일 검색 테스트
+  it('user search board', () => {
+    const board = {
+      title: '설탭 소개 업데이트 테스트',
+      content: '국내 넘버원 과외 설탭 업데이트 테스트',
+    };
+    const boardId = 1;
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `query {
+          searchBoard(param:{
+            boardId: ${boardId}
+          }){
+            done
+            board{
+              id
+              title
+              content
+              author{
+                id
+                name
+              }
+            }
+          }
+        }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.searchBoard.board.id).toBe(boardId.toString());
+        expect(body.data.searchBoard.board.title).toBe(board.title);
+        expect(body.data.searchBoard.board.content).toBe(board.content);
+      });
+  });
+
+  // 유저 콘텐츠 삭제 테스트
+  it('user delete board', () => {
+    const boardId = 1;
+    const name = 'seoltab';
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `mutation {
+          deleteBoard(param:{
+            userName:"${name}",
+            boardId: ${boardId}
+          }){
+            done
+            board{
+              id
+              title
+              content
+              author{
+                id
+                name
+              }
+            }
+          }
+        }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.deleteBoard.board.author.name).toBe(name);
+        expect(body.data.deleteBoard.board.id).toBe(boardId.toString());
+      });
+  });
 });
