@@ -7,7 +7,8 @@ import { AppResolver } from './app/app.resolver';
 import { AppService } from './app/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormConfig } from './shared/util/typeOrmConfig';
-import { ApolloDriver } from '@nestjs/apollo'
+import { ApolloDriver } from '@nestjs/apollo';
+import { JwtAuthGuard } from './user/jwt/JwtAuthGuard';
 
 @Module({
   imports: [
@@ -31,7 +32,15 @@ import { ApolloDriver } from '@nestjs/apollo'
         }
 
         return {
-          context: ({ req }) => ({ req }),
+          context: ({ req, connection }) => {
+            if (req) {
+              const user = req.headers.authorization;
+
+              return { ...req, users: user };
+            } else {
+              return connection;
+            }
+          },
           playground: true, // Allow playground in production
           introspection: true, // Allow introspection in production
           ...schemaModuleOptions,
@@ -39,6 +48,6 @@ import { ApolloDriver } from '@nestjs/apollo'
       },
     }),
   ],
-  providers: [AppService, BoardService, AppResolver],
+  providers: [AppService, BoardService, AppResolver, JwtAuthGuard],
 })
 export class AppModule {}

@@ -26,6 +26,95 @@ type User {
   boards: [Board!]!
 }
 
+type UserOut {
+  done: Boolean!
+  message: String
+  error: String
+  code: String
+  user: User!
+}
+
+type getBoardsOut {
+  done: Boolean!
+  message: String
+  error: String
+  code: String
+  author: User!
+}
+
+type GetUserTokenOut {
+  done: Boolean!
+  message: String
+  error: String
+  code: String
+  user: User!
+  accessToken: String!
+}
+
+type BoardOut {
+  done: Boolean!
+  message: String
+  error: String
+  code: String
+  board: Board!
+}
+
 type Query {
   hello(data: String): String!
+  searchUser(param: SearchUserIn!): UserOut!
+  getBoards(param: GetBoardsIn!): getBoardsOut!
+  getUserToken(param: GetUserTokenIn!): GetUserTokenOut!
+  getBoardsJwt: getBoardsOut!
+  searchBoard(param: searchBoardIn!): BoardOut!
+}
+
+input SearchUserIn {
+  id: Float!
+}
+
+input GetBoardsIn {
+  userName: String!
+}
+
+input GetUserTokenIn {
+  userName: String!
+}
+
+input searchBoardIn {
+  boardId: Float!
+}
+
+type Mutation {
+  createUser(param: CreateUserIn!): UserOut!
+  deleteUser(param: DeleteUserIn!): UserOut!
+  deleteUserJwt: UserOut!
+  createBoard(param: CreateBoardIn!): BoardOut!
+  updateBoard(param: UpdateBoardIn!): BoardOut!
+  deleteBoard(param: DeleteBoardIn!): BoardOut!
+}
+
+input CreateUserIn {
+  name: String!
+}
+
+input DeleteUserIn {
+  name: String!
+}
+
+input CreateBoardIn {
+  title: String!
+  content: String!
+  userName: String!
+}
+
+input UpdateBoardIn {
+  title: String
+  content: String
+  boardId: Float!
+  userName: String!
+}
+
+input DeleteBoardIn {
+  boardId: Float!
+  userName: String!
 }
