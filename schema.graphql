@@ -42,23 +42,15 @@ type DeleteUserOut {
   user: User!
 }
 
-type CreateBoardOut {
+type GetUserBoardOut {
   done: Boolean!
   message: String
   error: String
   code: String
-  board: Board!
+  board: [Board!]!
 }
 
-type UpdateBoardOut {
-  done: Boolean!
-  message: String
-  error: String
-  code: String
-  board: Board!
-}
-
-type DeleteBoardOut {
+type BoardOut {
   done: Boolean!
   message: String
   error: String
@@ -68,14 +60,21 @@ type DeleteBoardOut {
 
 type Query {
   hello(data: String): String!
+  getUserBoardByAll(param: GetUserBoardIn!): GetUserBoardOut!
+  getUserBoardById(param: GetUserBoardIn!): BoardOut!
+}
+
+input GetUserBoardIn {
+  board_id: Float
+  user_id: Float!
 }
 
 type Mutation {
   createUser(param: CreateUserIn!): CreateUserOut!
   deleteUser(param: DeleteUserIn!): DeleteUserOut!
-  createBoard(param: CreateBoardIn!): CreateBoardOut!
-  updateBoard(param: UpdateBoardIn!): UpdateBoardOut!
-  deleteBoard(param: DeleteBoardIn!): DeleteBoardOut!
+  createBoard(param: CreateBoardIn!): BoardOut!
+  updateBoard(param: UpdateBoardIn!): BoardOut!
+  deleteBoard(param: DeleteBoardIn!): BoardOut!
 }
 
 input CreateUserIn {

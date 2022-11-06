@@ -4,19 +4,13 @@ import { User } from 'src/user/user.model';
 import { Board } from '../board.model';
 
 @ObjectType()
-export class CreateBoardOut extends BaseOutDto {
-  @Field((type) => Board)
-  board?: Board;
+export class GetUserBoardOut extends BaseOutDto {
+  @Field((type) => [Board])
+  board?: Board[];
 }
 
 @ObjectType()
-export class UpdateBoardOut extends BaseOutDto {
-  @Field((type) => Board)
-  board?: Board;
-}
-
-@ObjectType()
-export class DeleteBoardOut extends BaseOutDto {
+export class BoardOut extends BaseOutDto {
   @Field((type) => Board)
   board?: Board;
 }

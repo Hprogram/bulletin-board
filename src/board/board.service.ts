@@ -9,13 +9,10 @@ import { Board } from './board.model';
 import {
   CreateBoardIn,
   DeleteBoardIn,
+  GetUserBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
-import {
-  CreateBoardOut,
-  DeleteBoardOut,
-  UpdateBoardOut,
-} from './dto/board.out.dto';
+import { GetUserBoardOut, BoardOut } from './dto/board.out.dto';
 
 @Injectable()
 export class BoardService {
@@ -35,9 +32,9 @@ export class BoardService {
     title,
     content,
     user_id,
-  }: CreateBoardIn): Promise<CreateBoardOut> {
+  }: CreateBoardIn): Promise<BoardOut> {
     try {
-      const responData = new CreateBoardOut();
+      const responData = new BoardOut();
       if (!title) {
         responData.done = false;
         responData.code = 'B003';
@@ -104,9 +101,9 @@ export class BoardService {
     content,
     user_id,
     board_id,
-  }: UpdateBoardIn): Promise<UpdateBoardOut> {
+  }: UpdateBoardIn): Promise<BoardOut> {
     try {
-      const responData = new UpdateBoardOut();
+      const responData = new BoardOut();
 
       if (!user_id) {
         errorSet(responData, 'B005');
@@ -173,12 +170,9 @@ export class BoardService {
   }
 
   // Board에 작성한 글 삭제 (softDelete)
-  async deleteBoard({
-    user_id,
-    board_id,
-  }: DeleteBoardIn): Promise<DeleteBoardOut> {
+  async deleteBoard({ user_id, board_id }: DeleteBoardIn): Promise<BoardOut> {
     try {
-      const responData = new DeleteBoardOut();
+      const responData = new BoardOut();
 
       if (!user_id) {
         errorSet(responData, 'B005');
@@ -231,6 +225,115 @@ export class BoardService {
         board.deletedAt = new Date();
         responData.done = true;
         responData.message = '정상적으로 삭제 되었습니다.';
+        responData.board = board;
+
+        return responData;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // Board에 User가 작성한 글 모아보기
+  async getUserBoardByAll({
+    user_id,
+  }: GetUserBoardIn): Promise<GetUserBoardOut> {
+    try {
+      const responData = new GetUserBoardOut();
+
+      if (!user_id) {
+        errorSet(responData, 'B005');
+        throw new HttpException(responData, 400);
+      }
+
+      // user_id로 User 검색. 후에 JWT
+      const user: User = await this._userRepository.findOne({
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user) {
+        // 해당 id user 존재하지 않음.
+        errorSet(responData, 'U002');
+        throw new HttpException(responData, 400);
+      }
+
+      // user가 있다면 user가 작성한 board를 모두 검색 (최신순 정렬)
+      const board: Board[] = await this._boardRepository.find({
+        relations: ['author'],
+        where: {
+          author: user,
+        },
+      });
+
+      board.sort((a, b) => {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+
+      if (board.length <= 0) {
+        // 해당 id board 존재하지 않음.
+        errorSet(responData, 'B007');
+        throw new HttpException(responData, 404);
+      } else {
+        responData.done = true;
+        responData.message = '유저가 작성한 글을 모두 불러왔습니다.';
+        responData.board = board;
+
+        return responData;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // Board에 User가 작성한 특정 글 가져오기 (ID)
+  async getUserBoardById({
+    user_id,
+    board_id,
+  }: GetUserBoardIn): Promise<BoardOut> {
+    try {
+      const responData = new BoardOut();
+
+      if (!user_id) {
+        errorSet(responData, 'B005');
+        throw new HttpException(responData, 400);
+      }
+
+      if (!board_id) {
+        errorSet(responData, 'B006');
+        throw new HttpException(responData, 400);
+      }
+
+      // user_id로 User 검색. 후에 JWT
+      const user: User = await this._userRepository.findOne({
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user) {
+        // 해당 id user 존재하지 않음.
+        errorSet(responData, 'U002');
+        throw new HttpException(responData, 400);
+      }
+
+      // user가 있다면 user가 작성한 board id가 맞는지 검색
+      const board: Board = await this._boardRepository.findOne({
+        relations: ['author'],
+        where: {
+          id: board_id,
+          author: user,
+        },
+      });
+
+      if (!board) {
+        // 해당 id board 존재하지 않음.
+        errorSet(responData, 'B002');
+        throw new HttpException(responData, 400);
+      } else {
+        responData.done = true;
+        responData.message = '정상적으로 불러왔습니다.';
         responData.board = board;
 
         return responData;

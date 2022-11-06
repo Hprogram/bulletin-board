@@ -35,3 +35,12 @@ export class DeleteBoardIn {
   @Field((type) => Number)
   user_id!: number;
 }
+
+@InputType()
+export class GetUserBoardIn {
+  @Field((type) => Number, { nullable: true })
+  board_id?: number;
+
+  @Field((type) => Number)
+  user_id!: number;
+}
