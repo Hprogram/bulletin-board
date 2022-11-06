@@ -9,9 +9,15 @@ import { getConnection, Repository } from 'typeorm';
 import { User } from 'src/user/user.model';
 import { Board } from 'src/board/board.model';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ApolloServerBase } from 'apollo-server-core';
+import { getApolloServer } from '@nestjs/apollo';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+
+  let tokenSave: string;
+
+  let apolloServer: ApolloServerBase<any>;
 
   let userRepository: Repository<User>;
   let boardRepository: Repository<Board>;
@@ -32,6 +38,7 @@ describe('AppController (e2e)', () => {
       getRepositoryToken(Board),
     );
     await app.init();
+    apolloServer = getApolloServer(app);
   });
 
   afterAll(async () => {
@@ -99,30 +106,6 @@ describe('AppController (e2e)', () => {
         expect(body.data.searchUser.user.name).toBe(name);
       });
   });
-
-  // // 유저 삭제 테스트
-  // it('user delete', () => {
-  //   const name = 'seoltab';
-  //   return request(app.getHttpServer())
-  //     .post('/graphql')
-  //     .send({
-  //       query: `mutation {
-  //       deleteUser(param:{
-  //         name: "${name}"
-  //       }){
-  //         done
-  //         user{
-  //           id
-  //           name
-  //         }
-  //       }
-  //     }`,
-  //     })
-  //     .expect(200)
-  //     .expect(({ body }) => {
-  //       expect(body.data.deleteUser.user.name).toBe(name);
-  //     });
-  // });
 
   // 유저 콘텐츠 생성 테스트
   it('user create board', () => {
@@ -194,7 +177,6 @@ describe('AppController (e2e)', () => {
       })
       .expect(200)
       .expect(({ body }) => {
-        console.log(body.data.getBoards.author);
         expect(body.data.getBoards.author.name).toBe(name);
         // 이전 테스트에서 유저가 작성한 글이 해당 유저가 작성한 글 안에 포함되었는지 확인.
         expect(body.data.getBoards.author.boards).toEqual(
@@ -279,6 +261,71 @@ describe('AppController (e2e)', () => {
       });
   });
 
+  // 유저 토큰 발급  테스트
+  it('user token', () => {
+    const name = 'seoltab';
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `query {
+        getUserToken(param:{
+          userName: "${name}"
+        }){
+          done
+          user{
+            id
+            name
+          }
+          accessToken
+        }
+      }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        tokenSave = body.data.getUserToken.accessToken;
+        expect(body.data.getUserToken.user.name).toBe(name);
+      });
+  });
+
+  // 유저가 쓴 글 모두 가져오기 JWT
+  it('boards of user jwt', () => {
+    const name = 'seoltab';
+    const board = {
+      title: '설탭 소개 업데이트 테스트',
+      content: '국내 넘버원 과외 설탭 업데이트 테스트',
+    };
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('Authorization', `Bearer ${tokenSave}`)
+      .send({
+        query: `query {
+          getBoardsJwt{
+            done
+            author{
+              id
+              name
+              boards{
+                id
+                title
+                content
+              }
+            }
+
+          }
+        }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.getBoardsJwt.author.name).toBe(name);
+        // 이전 테스트에서 유저가 작성한 글이 해당 유저가 작성한 글 안에 포함되었는지 확인.
+        expect(body.data.getBoardsJwt.author.boards).toEqual(
+          expect.arrayContaining([expect.objectContaining(board)]),
+        );
+      });
+  });
+
   // 유저 콘텐츠 삭제 테스트
   it('user delete board', () => {
     const boardId = 1;
@@ -309,6 +356,91 @@ describe('AppController (e2e)', () => {
       .expect(({ body }) => {
         expect(body.data.deleteBoard.board.author.name).toBe(name);
         expect(body.data.deleteBoard.board.id).toBe(boardId.toString());
+      });
+  });
+
+  // 유저 삭제 테스트
+  it('user delete', () => {
+    const name = 'seoltab';
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `mutation {
+        deleteUser(param:{
+          name: "${name}"
+        }){
+          done
+          user{
+            id
+            name
+          }
+        }
+      }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.deleteUser.user.name).toBe(name);
+      });
+  });
+
+  // 유저 삭제 테스트 JWT
+  it('user delete jwt', async () => {
+    const name = 'seoltab2';
+
+    await request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `mutation {
+        createUser(param:{
+          name: "${name}"
+        }){
+          done
+          user{
+            id
+            name
+          }
+        }
+      }`,
+      });
+
+    await request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `query {
+        getUserToken(param:{
+          userName: "${name}"
+        }){
+          done
+          user{
+            id
+            name
+          }
+          accessToken
+        }
+      }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        tokenSave = body.data.getUserToken.accessToken;
+      });
+
+    return await request(app.getHttpServer())
+      .post('/graphql')
+      .set('Authorization', `Bearer ${tokenSave}`)
+      .send({
+        query: `mutation {
+        deleteUserJwt{
+          done
+          user{
+            id
+            name
+          }
+        }
+      }`,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.deleteUserJwt.user.name).toBe(name);
       });
   });
 });
