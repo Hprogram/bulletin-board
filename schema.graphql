@@ -34,7 +34,15 @@ type UserOut {
   user: User!
 }
 
-type GetUserBoardOut {
+type getBoardsOut {
+  done: Boolean!
+  message: String
+  error: String
+  code: String
+  author: User!
+}
+
+type GetBoardsOut {
   done: Boolean!
   message: String
   error: String
@@ -53,7 +61,7 @@ type BoardOut {
 type Query {
   hello(data: String): String!
   searchUser(param: SearchUserIn!): UserOut!
-  getBoards(param: GetBoardsIn!): GetUserBoardOut!
+  getBoards(param: GetBoardsIn!): GetBoardsOut!
   searchBoard(param: searchBoardIn!): BoardOut!
 }
 
