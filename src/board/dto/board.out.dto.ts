@@ -4,12 +4,6 @@ import { User } from 'src/user/user.model';
 import { Board } from '../board.model';
 
 @ObjectType()
-export class GetBoardsOut extends BaseOutDto {
-  @Field((type) => [Board])
-  board?: Board[];
-}
-
-@ObjectType()
 export class BoardOut extends BaseOutDto {
   @Field((type) => Board)
   board?: Board;

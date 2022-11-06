@@ -1,6 +1,5 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { title } from 'process';
 import { ErrorCode } from 'src/shared/error.code';
 import { User } from 'src/user/user.model';
 import { Repository } from 'typeorm';
@@ -9,11 +8,10 @@ import { Board } from './board.model';
 import {
   CreateBoardIn,
   DeleteBoardIn,
-  GetBoardsIn,
   searchBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
-import { GetBoardsOut, BoardOut } from './dto/board.out.dto';
+import { BoardOut } from './dto/board.out.dto';
 
 @Injectable()
 export class BoardService {
@@ -219,57 +217,6 @@ export class BoardService {
         board.deletedAt = new Date();
         responData.done = true;
         responData.message = '정상적으로 삭제 되었습니다.';
-        responData.board = board;
-
-        return responData;
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  // Board에 User가 작성한 글 모아보기
-  async getBoards({ userName }: GetBoardsIn): Promise<GetBoardsOut> {
-    try {
-      const responData = new GetBoardsOut();
-
-      if (!userName) {
-        errorSet(responData, 'B005');
-        throw new HttpException(responData, 400);
-      }
-
-      // user_id로 User 검색. 후에 JWT
-      const user: User = await this._userRepository.findOne({
-        where: {
-          name: userName,
-        },
-      });
-
-      if (!user) {
-        // 해당 id user 존재하지 않음.
-        errorSet(responData, 'U002');
-        throw new HttpException(responData, 400);
-      }
-
-      // user가 있다면 user가 작성한 board를 모두 검색 (최신순 정렬)
-      const board: Board[] = await this._boardRepository.find({
-        relations: ['author'],
-        where: {
-          author: user,
-        },
-      });
-
-      board.sort((a, b) => {
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      });
-
-      if (board.length <= 0) {
-        // 해당 id board 존재하지 않음.
-        errorSet(responData, 'B007');
-        throw new HttpException(responData, 404);
-      } else {
-        responData.done = true;
-        responData.message = '유저가 작성한 글을 모두 불러왔습니다.';
         responData.board = board;
 
         return responData;
