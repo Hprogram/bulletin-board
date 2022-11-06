@@ -13,7 +13,7 @@ import {
   searchBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
-import { GetUserBoardOut, BoardOut } from './dto/board.out.dto';
+import { GetBoardsOut, BoardOut } from './dto/board.out.dto';
 
 @Injectable()
 export class BoardService {
@@ -229,9 +229,9 @@ export class BoardService {
   }
 
   // Board에 User가 작성한 글 모아보기
-  async getBoards({ userName }: GetBoardsIn): Promise<GetUserBoardOut> {
+  async getBoards({ userName }: GetBoardsIn): Promise<GetBoardsOut> {
     try {
-      const responData = new GetUserBoardOut();
+      const responData = new GetBoardsOut();
 
       if (!userName) {
         errorSet(responData, 'B005');
