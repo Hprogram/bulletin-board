@@ -36,23 +36,17 @@ export class BoardService {
     try {
       const responData = new BoardOut();
       if (!title) {
-        responData.done = false;
-        responData.code = 'B003';
-        responData.error = 'title을 입력해주세요.';
+        errorSet(responData, 'B003');
         throw new HttpException(responData, 400);
       }
 
       if (!content) {
-        responData.done = false;
-        responData.code = 'B004';
-        responData.error = 'content을 입력해주세요.';
+        errorSet(responData, 'B004');
         throw new HttpException(responData, 400);
       }
 
       if (!user_id) {
-        responData.done = false;
-        responData.code = 'B005';
-        responData.error = 'user_id을 입력해주세요.';
+        errorSet(responData, 'B005');
         throw new HttpException(responData, 400);
       }
 
@@ -66,9 +60,7 @@ export class BoardService {
       });
 
       if (!user) {
-        responData.done = false;
-        responData.code = 'U002';
-        responData.error = '해당 id를 가진 유저가 존재하지 않습니다.';
+        errorSet(responData, 'U002');
         throw new HttpException(responData, 400);
       }
 
@@ -79,9 +71,7 @@ export class BoardService {
       const saveBoard = await this._boardRepository.save(board);
 
       if (!saveBoard) {
-        responData.done = false;
-        responData.code = 'B001';
-        responData.error = '글 작성 실패';
+        errorSet(responData, 'B001');
         throw new HttpException(responData, 404);
       } else {
         responData.done = true;
