@@ -42,6 +42,15 @@ type getBoardsOut {
   author: User!
 }
 
+type GetUserTokenOut {
+  done: Boolean!
+  message: String
+  error: String
+  code: String
+  user: User!
+  accessToken: String!
+}
+
 type BoardOut {
   done: Boolean!
   message: String
@@ -54,6 +63,8 @@ type Query {
   hello(data: String): String!
   searchUser(param: SearchUserIn!): UserOut!
   getBoards(param: GetBoardsIn!): getBoardsOut!
+  getUserToken(param: GetUserTokenIn!): GetUserTokenOut!
+  getBoardsJwt: getBoardsOut!
   searchBoard(param: searchBoardIn!): BoardOut!
 }
 
@@ -65,6 +76,10 @@ input GetBoardsIn {
   userName: String!
 }
 
+input GetUserTokenIn {
+  userName: String!
+}
+
 input searchBoardIn {
   boardId: Float!
 }
@@ -72,6 +87,7 @@ input searchBoardIn {
 type Mutation {
   createUser(param: CreateUserIn!): UserOut!
   deleteUser(param: DeleteUserIn!): UserOut!
+  deleteUserJwt: UserOut!
   createBoard(param: CreateBoardIn!): BoardOut!
   updateBoard(param: UpdateBoardIn!): BoardOut!
   deleteBoard(param: DeleteBoardIn!): BoardOut!

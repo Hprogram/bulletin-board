@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { User } from '../user.model';
 
 @InputType()
 export class CreateUserIn {
@@ -20,6 +21,21 @@ export class SearchUserIn {
 
 @InputType()
 export class GetBoardsIn {
+  @Field((type) => String)
+  userName!: string;
+}
+
+@InputType()
+export class GetUserTokenIn {
+  @Field((type) => String)
+  userName!: string;
+}
+
+@InputType()
+export class GetTokenIn {
+  @Field((type) => Number)
+  id!: number;
+
   @Field((type) => String)
   userName!: string;
 }
