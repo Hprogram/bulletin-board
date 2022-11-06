@@ -40,6 +40,13 @@ type DeleteUserOut {
   user: User!
 }
 
+type CreateBoardOut {
+  done: Boolean!
+  error: String
+  code: String
+  board: Board!
+}
+
 type Query {
   hello(data: String): String!
 }
@@ -47,6 +54,7 @@ type Query {
 type Mutation {
   createUser(param: CreateUserIn!): CreateUserOut!
   deleteUser(param: DeleteUserIn!): DeleteUserOut!
+  createBoard(param: CreateBoardIn!): CreateBoardOut!
 }
 
 input CreateUserIn {
@@ -55,4 +63,10 @@ input CreateUserIn {
 
 input DeleteUserIn {
   id: Float!
+}
+
+input CreateBoardIn {
+  title: String!
+  content: String!
+  user_id: Float!
 }
