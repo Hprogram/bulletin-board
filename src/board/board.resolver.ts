@@ -8,7 +8,7 @@ import {
   searchBoardIn,
   UpdateBoardIn,
 } from './dto/board.in.dto';
-import { GetUserBoardOut, BoardOut } from './dto/board.out.dto';
+import { BoardOut, GetBoardsOut } from './dto/board.out.dto';
 
 @Resolver()
 export class BoardResolver {
@@ -34,8 +34,8 @@ export class BoardResolver {
     return await this.boardSvc.deleteBoard(param);
   }
 
-  @Query((type) => GetUserBoardOut)
-  async getBoards(@Args('param') param: GetBoardsIn): Promise<GetUserBoardOut> {
+  @Query((type) => GetBoardsOut)
+  async getBoards(@Args('param') param: GetBoardsIn): Promise<GetBoardsOut> {
     this.logger.log('get Boards');
     return await this.boardSvc.getBoards(param);
   }
