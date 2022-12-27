@@ -4,7 +4,6 @@
 
 docker-compose환경에서 모든 것이 이루어집니다.
 
-- local에서 테스트 하기 어려운 지원자가 있을 것이라 예상되어 docker-compose 환경을 구축하였습니다.
 - db, server, test 모두 service로 들어가 있습니다.
 
 - `src/shared/util/typeOrmConfig`에 db connection 정보가 있습니다.
@@ -81,8 +80,7 @@ $ npm run test:e2e
 
 ```
 
-e2e test에 적혀있는 3가지 테스트 케이스와 함께 추가적으로 CRUD에 대해서
-작성할 수 있는 테스트 케이스를 작성하여 주세요.
+e2e test에 적혀있는 3가지 테스트 케이스와 함께 추가적으로 CRUD에 대해서 작성할 수 있는 테스트 케이스를 작성
 
 ## 기획
 
@@ -163,8 +161,7 @@ export class Board extends BaseModel {
 }
 ```
 
-서버 개발시 꼭 데이터베이스를 이용해야하며 테스트 케이스에 통과된 개수로 채점을 진행합니다.
-테스트 케이스를 작성하여 주세요.
+서버 개발시 꼭 데이터베이스를 이용
 
 ### 최소 요구 API
 
