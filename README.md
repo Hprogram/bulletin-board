@@ -1,26 +1,3 @@
-<p align="center">
-  <a href="https://www.seoltab.com/" target="blank"><img src="https://oopy.lazyrockets.com/api/v2/notion/image?src=https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F029b9664-e3bf-43c0-a3d9-04482f891391%2Fimage_(43).png&blockId=33f0f7c2-790e-4983-8ed8-728ed29f9f2d&width=256" width="320" alt="seotab Logo" /></a>
-</p>
-
-  <p align="center">No 1 과외, 설탭 채용 과제</p>
-  
-## Description
-
-[Nest](https://github.com/nestjs/nest)와 [TypeOrm](https://typeorm.io/#/)을 이용해서 grpahql 서버를 짜는 과제입니다.
-
-완성을 원하는 것이 아니라 코드 작성에 대한 과정 및 의도를 보려고 함이니 큰 부담 가지지 않으셔도 됩니다.
-
-src 내에 app, board, user 도메인이 존재하고
-test/app.e2e-spec.ts 안에 테스트에 맞춰 resolver와 service를 작성해주시면 됩니다.
-
-database는 docker-compose를 통해 가동하셔서 진행하시면 되고 docker-compose 서버 컨테이너는 prod 환경으로 진행됩니다.
-
-완료 기간은 1주일이내 완료해주시면 되고 해당 리포지토리를 clone하여 작성해주신 후
-
-origin 을 따로 추가해서 개인 리포의 repository url을 mail(goobaek@onuii.com)로 보내주시면 됩니다.
-
-추가적으로 질문사항이나 궁금한 것이 있으면 [오픈채팅방](https://open.kakao.com/o/gvVJSxHe)에서 질문 바랍니다.
-
 - Before you start
 
   개발에만 집중할 수 있도록, 일부 서버 환경(nestjs/typeorm)이 포함되어 있습니다.
@@ -205,30 +182,3 @@ board 작성 : createBoard
 
 유저가 작성한 board 검색 : getBoards
 
-## 제출 방법
-
-과제를 받고 일주일 기한 안에 mail로 repository url을 보내주시면 됩니다.
-
-## 채점 방법
-
-e2e test 를 진행하여 test 통과 갯수로 진행합니다.
-
-test 케이스를 다양하게 작성하시면 가산점이 적용됩니다.
-
-### 가산점 항목
-
-- [5점]graphql schema first로 코드를 변경해서 코딩한 경우
-- [4점][jwt](https://jwt.io/)를 이용하여서 authentication과 authorization을 구현하였을 경우
-  - nest의 authguard를 사용할 수 있습니다.
-- [2점]도메인 별로 브랜치를 나누어서 개발했을 경우
-- [5점]test case 를 직접 작성하였을 경우
-- [5점]cqrs 패턴으로 변경하여 서버 구성한 경우
-
-## Support
-
-[오픈채팅방](https://open.kakao.com/o/gvVJSxHe)
-
-## Stay in touch
-
-- mail - goobaek@onuii.com
-- Website - [https://www.seoltab.com](https://www.seoltab.com)
