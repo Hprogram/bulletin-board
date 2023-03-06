@@ -80,8 +80,6 @@ $ npm run test:e2e
 
 ```
 
-e2e test에 적혀있는 3가지 테스트 케이스와 함께 추가적으로 CRUD에 대해서 작성할 수 있는 테스트 케이스를 작성
-
 ## 기획
 
 ### 구현해야 될 것
@@ -160,8 +158,6 @@ export class Board extends BaseModel {
   author!: User;
 }
 ```
-
-서버 개발시 꼭 데이터베이스를 이용
 
 ### 최소 요구 API
 
