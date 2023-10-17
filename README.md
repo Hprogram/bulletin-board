@@ -2,7 +2,7 @@
 
 ## docker
 
-docker-compose환경에서 모든 것이 이루어집니다.
+docker-compose환경
 
 - db, server, test 모두 service로 들어가 있습니다.
 
@@ -159,7 +159,7 @@ export class Board extends BaseModel {
 }
 ```
 
-### 최소 요구 API
+### API
 
 유저 생성 : createUser
 
